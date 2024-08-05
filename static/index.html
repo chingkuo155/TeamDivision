@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Processing</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        .controls {
+            margin: 20px;
+        }
+        video {
+            width: 100%;
+            max-height: 480px;
+        }
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .checkbox-container label {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Processing</h1>
+        <div class="controls">
+            <input type="file" id="video-upload" accept="video/*">
+            <button onclick="uploadVideo()">Upload Video</button>
+        </div>
+        <div class="controls">
+            <input type="text" id="youtube-url" placeholder="Enter YouTube URL">
+            <button onclick="processYoutube()">Process YouTube Video</button>
+        </div>
+        <div class="checkbox-container">
+            <label><input type="checkbox" id="team-a" checked> Team A</label>
+            <label><input type="checkbox" id="team-b" checked> Team B</label>
+            <label><input type="checkbox" id="hoop" checked> Hoop</label>
+            <label><input type="checkbox" id="ball" checked> Ball</label>
+        </div>
+        <div class="controls">
+            <video id="video-player" controls>
+                <source id="video-source" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    <script>
+        function uploadVideo() {
+            var fileInput = document.getElementById('video-upload');
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            $.ajax({
+                url: '/upload/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#video-source').attr('src', response);
+                    $('#video-player')[0].load();
+                }
+            });
+        }
+
+        function processYoutube() {
+            var youtubeUrl = $('#youtube-url').val();
+            $.ajax({
+                url: '/process_youtube/',
+                type: 'POST',
+                data: { url: youtubeUrl },
+                success: function(response) {
+                    $('#video-source').attr('src', response);
+                    $('#video-player')[0].load();
+                }
+            });
+        }
+
+        // Listen to checkbox changes
+        $('#team-a').change(function() {
+            var checked = $(this).is(':checked');
+            console.log('Team A: ' + checked);
+            // Handle the visibility of Team A in the video
+        });
+
+        $('#team-b').change(function() {
+            var checked = $(this).is(':checked');
+            console.log('Team B: ' + checked);
+            // Handle the visibility of Team B in the video
+        });
+
+        $('#hoop').change(function() {
+            var checked = $(this).is(':checked');
+            console.log('Hoop: ' + checked);
+            // Handle the visibility of the Hoop in the video
+        });
+
+        $('#ball').change(function() {
+            var checked = $(this).is(':checked');
+            console.log('Ball: ' + checked);
+            // Handle the visibility of the Ball in the video
+        });
+    </script>
+</body>
+</html>
